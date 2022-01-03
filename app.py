@@ -1,11 +1,11 @@
 from flask import Flask, render_template, url_for, flash, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
-from os import name, path
+# from os import name, path
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://btseqeqagbefls:367858385c4422d71cc7a9695baab680b250b6f30061fd84e4f9162332115107@ec2-23-23-17-212.compute-1.amazonaws.com:5432/d6f5jfae42a572"
+app.config["SQLALCHEMY_DATABASE_URI"] = environ.get('DATABASE_URL')
 app.config["SECRET_KEY"] = "may the force be with you"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -25,8 +25,8 @@ class Contacts(db.Model):
     mobile = db.Column(db.String(15))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
-if not path.exists("database.db"):
-    db.create_all()
+# if not path.exists("database.db"):
+#     db.create_all()
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
