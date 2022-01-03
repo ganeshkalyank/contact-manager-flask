@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, flash, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
-from os import path
+from os import name, path
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -92,9 +92,40 @@ def signup():
             return redirect(url_for("login"))
     return render_template("signup.html")
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=["POST","GET"])
 @login_required
 def dashboard():
+    if request.method == "POST":
+        action = request.form.get("action")
+        if action == "new":
+            name = request.form.get("name")
+            email = request.form.get("email")
+            mobile = request.form.get("mobile")
+            new_contact = Contacts(name=name,email=email,mobile=mobile,user_id=current_user.id)
+            db.session.add(new_contact)
+            db.session.commit()
+            return redirect(url_for("dashboard"))
+        elif action == "edit":
+            id = int(request.form.get("id"))
+            name = request.form.get("name")
+            email = request.form.get("email")
+            mobile = request.form.get("mobile")
+            contact_to_be_edited = Contacts.query.get(id)
+            if contact_to_be_edited.user_id == current_user.id:
+                contact_to_be_edited.name = name
+                contact_to_be_edited.email = email
+                contact_to_be_edited.mobile = mobile
+                db.session.commit()
+            return redirect(url_for("dashboard"))
+        elif action == "delete":
+            id = int(request.form.get("id"))
+            contact_to_be_deleted = Contacts.query.get(id)
+            if contact_to_be_deleted.user_id == current_user.id:
+                db.session.delete(contact_to_be_deleted)
+                db.session.commit()
+            return redirect(url_for("dashboard"))
+        else:
+            return redirect(url_for("dashboard"))
     return render_template("dashboard.html")
 
 @app.route("/logout")

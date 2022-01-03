@@ -4,6 +4,107 @@
 
 {%block body%}
     <div class="container">
-        <h3 class="text-center">Dashboard is under development!</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newContact">New</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in current_user.contacts %}
+                <tr>
+                    <td>{{contact.name}}</td>
+                    <td>{{contact.email}}</td>
+                    <td>{{contact.mobile}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="btn group">
+                            <form method="post">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="id" value="{{contact.id}}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            <button class="btn btn-warning" onclick="editContact('{{contact.id}}','{{contact.name}}','{{contact.email}}','{{contact.mobile}}')">Modify</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    <div class="modal fade" id="newContact" tabindex="-1" aria-labelledby="newContact" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newContactLabel">New contact</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="text" name="name" id="name" class="form-control" placeholder=".">
+                            <label for="name">Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" id="email" class="form-control" placeholder=".">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" name="mobile" id="mobile" class="form-control" placeholder=".">
+                            <label for="mobile">Mobile</label>
+                        </div>
+                        <input type="hidden" name="action" value="new">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editContact" tabindex="-1" aria-labelledby="editContact" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editContactLabel">Edit contact</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="text" name="name" id="edit_name" class="form-control" placeholder=".">
+                            <label for="edit_name">Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" id="edit_email" class="form-control" placeholder=".">
+                            <label for="edit_email">Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" name="mobile" id="edit_mobile" class="form-control" placeholder=".">
+                            <label for="edit_mobile">Mobile</label>
+                        </div>
+                        <input type="hidden" name="id" id="edit_id">
+                        <input type="hidden" name="action" value="edit">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function editContact(id,name,email,mobile) {
+            var editModal = new bootstrap.Modal(document.getElementById("editContact"), {
+                keyboard: false
+            })
+            document.getElementById("edit_id").value = id;
+            document.getElementById("edit_name").value = name;
+            document.getElementById("edit_email").value = email;
+            document.getElementById("edit_mobile").value = mobile;
+            editModal.show();
+        }
+    </script>
 {%endblock%}
