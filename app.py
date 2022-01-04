@@ -5,7 +5,7 @@ from os import path, environ
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") or "sqlite:///database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://")
 app.config["SECRET_KEY"] = "may the force be with you"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -24,10 +24,6 @@ class Contacts(db.Model):
     email = db.Column(db.String(150))
     mobile = db.Column(db.String(15))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-if not app.config["SQLALCHEMY_DATABASE_URI"] == environ.get("DATABASE_URL"):
-    if not path.exists("database.db"):
-        db.create_all()
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
