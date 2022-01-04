@@ -10,8 +10,8 @@
             <form method="post" class="p-3">
                 <h3 class="text-center mb-3">Signup</h3>
                 <div class="form-floating mb-3">
-                    <input class="form-control" id="email" type="text" name="name" placeholder=".">
-                    <label for="email">Name</label>
+                    <input class="form-control" id="name" type="text" name="name" placeholder=".">
+                    <label for="name">Name</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input class="form-control" id="email" type="email" name="email" placeholder=".">
@@ -25,6 +25,7 @@
                     <input class="form-control" id="password2" type="password" name="password2" placeholder=".">
                     <label for="password2">Retype Password</label>
                 </div>
+                <p class="form-text">Already have an account? <a href="{{url_for('login')}}">Login</a></p>
                 <div class="d-flex justify-content-center mb-3">
                     <button class="btn btn-dark" type="submit">Signup</button>
                 </div>

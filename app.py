@@ -5,8 +5,10 @@ from os import environ
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://")
-app.config["SECRET_KEY"] = environ.get("SESSION_KEY")
+#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" # development database
+#app.config["SECRET_KEY"] = "may the force be with you" # development session key
+app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") # production database
+app.config["SECRET_KEY"] = environ.get("SESSION_KEY") # production session key
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
