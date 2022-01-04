@@ -142,13 +142,15 @@ def profile():
             flash("Email already exists!", category="error")
         elif len(email) < 5:
             flash("Email is invalid!", category="error")
-        else:
+        elif current_user.id == id:
             user_to_be_edited = Users.query.get(int(id))
             user_to_be_edited.name = name
             user_to_be_edited.email = email
             db.session.commit()
             flash("Profile details updated successfully!", category="success")
             return redirect(url_for("profile"))
+        else:
+            flash("Some error occurred!", category="error")
     return render_template("profile.html")
 
 @app.route("/logout")
