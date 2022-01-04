@@ -5,7 +5,7 @@ from os import path, environ
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL") or "sqlite:///database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") or "sqlite:///database.db"
 app.config["SECRET_KEY"] = "may the force be with you"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
