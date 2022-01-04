@@ -125,6 +125,32 @@ def dashboard():
             return redirect(url_for("dashboard"))
     return render_template("dashboard.html")
 
+@app.route("/profile", methods=["POST","GET"])
+@login_required
+def profile():
+    if request.method == "POST":
+        id = request.form.get("id")
+        name = request.form.get("name")
+        email = request.form.get("email")
+        if email == current_user.email:
+            user_check = None
+        else:
+            user_check = Users.query.filter_by(email=email).first()
+        if len(name) < 3:
+            flash("Name is too short!", category="error")
+        elif user_check:
+            flash("Email already exists!", category="error")
+        elif len(email) < 5:
+            flash("Email is invalid!", category="error")
+        else:
+            user_to_be_edited = Users.query.get(int(id))
+            user_to_be_edited.name = name
+            user_to_be_edited.email = email
+            db.session.commit()
+            flash("Profile details updated successfully!", category="success")
+            return redirect(url_for("profile"))
+    return render_template("profile.html")
+
 @app.route("/logout")
 @login_required
 def logout():

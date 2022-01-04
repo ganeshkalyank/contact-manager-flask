@@ -19,6 +19,7 @@
                     <li class="nav-item"><a href="{{url_for('index')}}" class="nav-link">Home</a></li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item"><a href="{{url_for('dashboard')}}" class="nav-link">Dashboard</a></li>
+                    <li class="nav-item"><a href="{{url_for('profile')}}" class="nav-link">Profile</a></li>
                     <li class="nav-item"><a href="{{url_for('logout')}}" class="nav-link">Logout</a></li>
                     {% else %}
                     <li class="nav-item"><a href="{{url_for('login')}}" class="nav-link">Login</a></li>
@@ -31,20 +32,26 @@
     <div class="py-5">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-            <div class="container mb-3">
-                {% for category, message in messages %}
-                    {% if category == "error" %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            {{message}}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{message}}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-lg-4"></div>
+                    <div class="col-lg-4">
+                        {% for category, message in messages %}
+                            {% if category == "error" %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{message}}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{message}}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-4"></div>
+                </div>
             </div>
             {% endif %}
             {% endwith %}
