@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, flash, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
-from os import path, environ
+from os import environ
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
