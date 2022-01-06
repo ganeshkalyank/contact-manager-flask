@@ -1,12 +1,12 @@
 from flask import Flask, render_template, url_for, flash, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user, fresh_login_required
 from os import environ
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" # development database
-#app.config["SECRET_KEY"] = "may the force be with you" # development session key
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" # development database
+# app.config["SECRET_KEY"] = "may the force be with you" # development session key
 app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") # production database
 app.config["SECRET_KEY"] = environ.get("SESSION_KEY") # production session key
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -27,9 +27,19 @@ class Contacts(db.Model):
     mobile = db.Column(db.String(15))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
+@app.before_request
+def before_request():
+   if not request.is_secure:
+       url = request.url.replace('http://', 'https://', 1)
+       code = 301
+       return redirect(url, code=code)
+
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.login_message_category = "error"
+login_manager.refresh_view = "login"
+login_manager.needs_refresh_message = "Please logout and login again to access that page!"
+login_manager.needs_refresh_message_category = "error"
 login_manager.init_app(app)
 
 @login_manager.user_loader
@@ -128,7 +138,7 @@ def dashboard():
     return render_template("dashboard.html")
 
 @app.route("/profile", methods=["POST","GET"])
-@login_required
+@fresh_login_required
 def profile():
     if request.method == "POST":
         id = request.form.get("id")
