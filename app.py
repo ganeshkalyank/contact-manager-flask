@@ -3,16 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user, fresh_login_required
 from os import environ, path
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-is_gunicorn = "gunicorn" in environ.get("SERVER_SOFTWARE", "")
-if is_gunicorn:
-    app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") # production database
-    app.config["SECRET_KEY"] = environ.get("SESSION_KEY") # production session key
-else:
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db" # development database
-    app.config["SECRET_KEY"] = "may the force be with you" # development session key
+#is_gunicorn = "gunicorn" in environ.get("SERVER_SOFTWARE", "")
+#if is_gunicorn:
+#    app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL").replace("postgres://","postgresql://") # production database
+#    app.config["SECRET_KEY"] = environ.get("SESSION_KEY") # production session key
+#else:
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SECRET_KEY"] = "may the force be with you"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 db = SQLAlchemy(app)
 
@@ -30,17 +33,17 @@ class Contacts(db.Model):
     mobile = db.Column(db.String(15))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
-if not is_gunicorn:
-    if not path.exists("database.db"):
-        db.create_all()
+#if not is_gunicorn:
+if not path.exists("database.db"):
+    db.create_all()
 
-if is_gunicorn:
-    @app.before_request
-    def before_request():
-        if not request.is_secure:
-            url = request.url.replace('http://', 'https://', 1)
-            code = 301
-            return redirect(url, code=code)
+#if is_gunicorn:
+#    @app.before_request
+#    def before_request():
+#        if not request.is_secure:
+#            url = request.url.replace('http://', 'https://', 1)
+#            code = 301
+#            return redirect(url, code=code)
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
